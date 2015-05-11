@@ -1,0 +1,31 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: centos-6.6
+
+config:
+  cache:
+    scope: box
+
+suites:
+  - name: oracle-client-11-2-0-1-0
+    run_list:
+      - recipe[oracle-client-11-2-0-1-0]
+    attributes:
+      common_artifact_repo: <%= ENV['COMMON_ARTIFACT_REPO'] %>
+  - name: oracle-client-12-1-0-1-0
+    run_list:
+      - recipe[oracle-client-12-1-0-1-0]
+    atributes:
+      common_artifact_repo: <%= ENV['COMMON_ARTIFACT_REPO'] %>
+      oracle:
+        client:
+          tnsnames:
+            host: k-test-unicon
+            port: 13870
+            service_name: ktst
