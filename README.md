@@ -1,6 +1,8 @@
 [![Stories in Ready](https://badge.waffle.io/universityofderby/chef-oracle-client.png?label=ready&title=Ready)](https://waffle.io/universityofderby/chef-oracle-client)
 # oracle-client cookbook
 
+[![Join the chat at https://gitter.im/universityofderby/chef-oracle-client](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/universityofderby/chef-oracle-client?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 # Requirements
 
 # Usage
