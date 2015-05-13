@@ -1,15 +1,14 @@
 oracle-client cookbook
 ======================
-=======
 [![Stories in Ready](https://badge.waffle.io/universityofderby/chef-oracle-client.png?label=ready&title=Ready)](https://waffle.io/universityofderby/chef-oracle-client)
-# oracle-client cookbook
+[![Join the chat at https://gitter.im/universityofderby/chef-oracle-client](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/universityofderby/chef-oracle-client?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Scope
 -----
 This cookbook is concerned with a full installation of oracle-client. This will give access to oracle-cient, sqlplus etc.
 You will need to accept the terms & conditions on the oracle site and download to an on-site artifact store: http://www.oracle.com/technetwork
 
-this cookbook will setup the tnsnames file through the use of node attributes (detailed below).
+This cookbook will setup the tnsnames file through the use of node attributes (detailed below).
 
 This cookbook does not set up an oracle-client service.
 
@@ -21,6 +20,7 @@ Requirements
 Platform Support
 ----------------
 The following platforms have been tested with Test Kitchen:
+=======
 
 ```
 |----------------+------------+------------|
