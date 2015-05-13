@@ -18,11 +18,11 @@ Requirements
  - Chef 12 or higher
  - oracle-client downloaded to an on-site location.
 
- Platform Support
- ----------------
- The following platforms have been tested with Test Kitchen:
+Platform Support
+----------------
+The following platforms have been tested with Test Kitchen:
 
- ```
+```
 |----------------+------------+------------|
 |                | 12.1.0.1.0 | 11.2.0.1.0 |
 |----------------+------------+------------|
@@ -36,8 +36,8 @@ Requirements
 |----------------+------------+------------|
 | centos-6       |     X      |      X     |
 |----------------+------------+------------|
- ```
- If your Operating system is not on this list please submit a pull request with an update kitchen file and related tests.
+```
+If your Operating system is not on this list please submit a pull request with an update kitchen file and related tests.
 
 Cookbook Dependencies
 ---------------------
@@ -47,17 +47,25 @@ Cookbook Dependencies
 
 Usage
 --------
-Palace a dependency on the oracle-client cookbook in your cookbook's metadata file
+This cookbook uses the common_artifact_repo pattern. 
+
+The download URL is worked out from `node.common_artifact_repo` + installer_file
+This allows you to have a common artifact store url accross an environment or accross a single application. 
+
+To override this pattern simple supply the `installer_file_url:` in the oracle_client resource.
+
+Place a dependency on the oracle-client cookbook in your cookbook's metadata file
 ```ruby
 depends 'oracle-client', '~> 0.1.0'
 ```
 
 Then in a recipe:
 ```ruby
+node.default['common_artifact_url'] = 'htttp://artifact.home/software'
+
 oracle_client '11.2.0.1' do
   ownername 'app1'
   groupname 'app_group'
-  installer_url 'http://artifactrepo.company/client-11.2.0.1.zip'
   installer_file 'client-11.2.0.1.zip'
 end
 ```
