@@ -1,5 +1,8 @@
 oracle-client cookbook
 ======================
+=======
+[![Stories in Ready](https://badge.waffle.io/universityofderby/chef-oracle-client.png?label=ready&title=Ready)](https://waffle.io/universityofderby/chef-oracle-client)
+# oracle-client cookbook
 
 Scope
 -----
