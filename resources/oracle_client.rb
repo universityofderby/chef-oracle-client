@@ -1,27 +1,45 @@
+#
+# Cookbook Name:: oracle-client
+# Resource:: oralcle_client
+#
+# Copyright (C) 2015 University of Derby
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 resource_name :oracle_client
 
 property :version, String, name_property: true
-property :groupname, String, default: { 'oracle' }
-property :ownername, String, default: { 'oracle' }
+property :groupname, String, default: 'oracle'
+property :ownername, String, default: 'oracle'
 property :cache_path, String, default: lazy { ::File.join(Chef::Config[:file_cache_path], "oracle-client-#{version}") }
-property :silent_file, String, default: lazy{
+property :silent_file, String, default: lazy {
     if Gem::Version.new(version) < Gem::Version.new('12.1.0.1.0')
       'client-11.rsp'
     else
       'client-12.rsp'
     end
 }
-property :silent_path, String, default: { ::File.join(cache_path, silent_file) }
-property :installer_file, String, default: { 'V38499-01.zip' }
-property :installer_path, String, default: { ::File.join(cache_path, version) }
+property :silent_path, String, default: lazy { ::File.join(cache_path, silent_file) }
+property :installer_file, String, default: 'V38499-01.zip'
+property :installer_path, String, default: lazy{ ::File.join(cache_path, version) }
 property :installer_url, String, default: lazy { ::File.join(node['common_artifact_repo'], "/oracle/client/#{version}/#{installer_file}") }
-property :locale, String, default: { 'en_GB' }
-property :inventory_location, String, default: { node['oracle']['inventory']['location'] }
-property :client_home, String, default: { ::File.join(oracle_base, "oracle-client-#{version}") }
-property :oracle_base, String, default: { '/opt/oracle' }
-property :admin_dir, String, default: { File.join(client_home, 'network', 'admin') }
-property :tnsnames, String, default: { File.join(admin_dir, 'tnsnames.ora') }
-property :sqlnet, String, default { File.join(admin_dir, 'sqlnet.ora') }
+property :locale, String, default: 'en_GB'
+property :inventory_location, String, default: lazy{ node['oracle']['inventory']['location'] }
+property :client_home, String, default: lazy{ ::File.join(oracle_base, "oracle-client-#{version}")}
+property :oracle_base, String, default: '/opt/oracle'
+property :admin_dir, String, default: lazy{ ::File.join(client_home, 'network', 'admin')}
+property :tnsnames, String, default: lazy{ ::File.join(admin_dir, 'tnsnames.ora')}
+property :sqlnet, String, default: lazy{ ::File.join(admin_dir, 'sqlnet.ora')}
 
 action :create do
   group groupname
