@@ -22,24 +22,29 @@ property :version, String, name_property: true
 property :groupname, String, default: 'oracle'
 property :ownername, String, default: 'oracle'
 property :cache_path, String, default: lazy { ::File.join(Chef::Config[:file_cache_path], "oracle-client-#{version}") }
+property :silent_cookbook, String, default: 'oracle-client'
 property :silent_file, String, default: lazy {
-    if Gem::Version.new(version) < Gem::Version.new('12.1.0.1.0')
-      'client-11.rsp'
-    else
-      'client-12.rsp'
-    end
+  if Gem::Version.new(version) < Gem::Version.new('12.1.0.1.0')
+    'client-11.rsp'
+  else
+    'client-12.rsp'
+  end
 }
 property :silent_path, String, default: lazy { ::File.join(cache_path, silent_file) }
-property :installer_file, String, default: 'V38499-01.zip'
-property :installer_path, String, default: lazy{ ::File.join(cache_path, version) }
+property :installer_file, String, default: 'linuxamd64_12102_client.zip'
+property :installer_path, String, default: lazy { ::File.join(cache_path, version) }
 property :installer_url, String, default: lazy { ::File.join(node['common_artifact_repo'], "/oracle/client/#{version}/#{installer_file}") }
 property :locale, String, default: 'en_GB'
-property :inventory_location, String, default: lazy{ node['oracle']['inventory']['location'] }
-property :client_home, String, default: lazy{ ::File.join(oracle_base, "oracle-client-#{version}")}
+property :inventory_location, String, default: lazy { node['oracle']['inventory']['location'] }
+property :client_home, String, default: lazy { ::File.join(oracle_base, "oracle-client-#{version}") }
 property :oracle_base, String, default: '/opt/oracle'
-property :admin_dir, String, default: lazy{ ::File.join(client_home, 'network', 'admin')}
-property :tnsnames, String, default: lazy{ ::File.join(admin_dir, 'tnsnames.ora')}
-property :sqlnet, String, default: lazy{ ::File.join(admin_dir, 'sqlnet.ora')}
+property :admin_dir, String, default: lazy { ::File.join(client_home, 'network', 'admin') }
+property :tnsnames, String, default: lazy { ::File.join(admin_dir, 'tnsnames.ora') }
+property :tnsnames_cookbook, String, default: 'oracle-client'
+property :sqlnet, String, default: lazy { ::File.join(admin_dir, 'sqlnet.ora') }
+property :sqlnet_cookbook, String, default: 'oracle-client'
+
+default_action :create
 
 action :create do
   group groupname
@@ -106,10 +111,10 @@ action :create do
   end
 
   template silent_path do
+    cookbook silent_cookbook
     group groupname
     owner ownername
     source silent_file + '.erb'
-    cookbook 'oracle-client'
     variables(
       groupname: groupname,
       inventory_location: inventory_location,
@@ -137,21 +142,21 @@ action :create do
   end
 
   template tnsnames do
-    mode 00755
+    cookbook tnsnames_cookbook
+    mode '0755'
     owner ownername
     group groupname
     source 'tnsnames.ora.erb'
     variables db: node['oracle']['client']['tnsnames']
     only_if { node['oracle']['client']['tnsnames'] }
-    cookbook 'oracle-client'
   end
 
   template sqlnet do
-    mode 00755
+    cookbook sqlnet_cookbook
+    mode '0755'
     owner ownername
     group groupname
     source 'sqlnet.ora.erb'
-    cookbook 'oracle-client'
     variables oracle_base: oracle_base
   end
 end
