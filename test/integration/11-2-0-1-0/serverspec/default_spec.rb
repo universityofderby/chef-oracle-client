@@ -16,13 +16,13 @@ describe user('oracle') do
   it { should belong_to_group 'dba' }
 end
 
-describe file('/tmp/kitchen/cache/oracle-client-11.2.0.1') do
+describe file('/tmp/kitchen/cache/oracle-client-11.2.0.1.0') do
   it { should be_a_directory }
   it { should be_owned_by 'oracle' }
   it { should be_grouped_into 'oracle' }
 end
 
-describe file('/tmp/kitchen/cache/oracle-client-11.2.0.1/client-11.rsp') do
+describe file('/tmp/kitchen/cache/oracle-client-11.2.0.1.0/client-11.rsp') do
   it { should be_a_file }
   it { should be_owned_by 'oracle' }
   it { should be_grouped_into 'oracle' }
@@ -41,19 +41,19 @@ describe file('/opt/oracle') do
 end
 
 # Oracle Client Dir
-describe file('/opt/oracle/oracle-client-11.2.0.1') do
+describe file('/opt/oracle/oracle-client-11.2.0.1.0') do
   it { should be_a_directory }
   it { should be_owned_by 'oracle' }
   it { should be_grouped_into 'oracle' }
 end
 
 # Oracle TNS Names
-describe file('/opt/oracle/oracle-client-11.2.0.1/network/admin') do
+describe file('/opt/oracle/oracle-client-11.2.0.1.0/network/admin') do
   it { should be_a_directory }
   it { should be_owned_by 'oracle' }
 end
 
-describe file('/opt/oracle/oracle-client-11.2.0.1/network/admin/tnsnames.ora') do
+describe file('/opt/oracle/oracle-client-11.2.0.1.0/network/admin/tnsnames.ora') do
   it { should be_a_file }
   it { should be_owned_by 'oracle' }
   it { should be_grouped_into 'oracle' }
@@ -62,7 +62,7 @@ describe file('/opt/oracle/oracle-client-11.2.0.1/network/admin/tnsnames.ora') d
   it { should contain 'ktst' }
 end
 
-describe file('/opt/oracle/oracle-client-11.2.0.1/network/admin/sqlnet.ora') do
+describe file('/opt/oracle/oracle-client-11.2.0.1.0/network/admin/sqlnet.ora') do
   it { should be_a_file }
   it { should be_owned_by 'oracle' }
   it { should be_grouped_into 'oracle' }

@@ -6,19 +6,15 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: centos-6.6
-
-config:
-  cache:
-    scope: box
+  - name: centos-6.8
 
 suites:
-  - name: oracle-client-11-2-0-1-0
+  - name: 11-2-0-1-0
     run_list:
       - recipe[oracle-client-11-2-0-1-0]
     attributes:
       common_artifact_repo: <%= ENV['COMMON_ARTIFACT_REPO'] %>
-  - name: oracle-client-12-1-0-2-0
+  - name: 12-1-0-2-0
     run_list:
       - recipe[oracle-client-12-1-0-2-0]
     attributes:
