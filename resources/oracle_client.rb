@@ -79,7 +79,7 @@ action :create do
     end
   else
     # Client 12 Packages
-    client12_packages = %w(binutils  compat-libstdc++-33 gcc gcc-c++ glibc glibc glibc-devel glibc-devel ksh libgcc libgcc libstdc++ libstdc++ libstdc++ libstdc++ libaio libaio libaio-devel libaio-devel libXext libXext libXtst libXtst libX11 libX11 libXau libXau libxcb libxcb libXi libXi make sysstat)
+    client12_packages = %w(binutils %w(binutils compat-libcap1 compat-libstdc++-33.i686 compat-libstdc++-33.x86_64 gcc gcc-c++ glibc.i686 glibc.x86_64 glibc-devel.i686 glibc-devel.x86_64 ksh libaio.i686 libaio.x86_64 libaio-devel.i686 libaio-devel.x86_64 libgcc.i686 libgcc.x86_64 libstdc++.i686 libstdc++.x86_64 libstdc++-devel.i686 libstdc++-devel.x86_64 libXi.i686 libXi libXtst.i686 libXtst.x86_64 libXext.i686 libXext.x86_64 libX11.i686 libX11.x86_64 libXau.i686 libXau.x86_64 libxcb.i686 libxcb.x86_64 make sysstat)
     client12_packages.each do |p|
       package p
     end
