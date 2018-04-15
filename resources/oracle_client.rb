@@ -43,6 +43,7 @@ property :tnsnames, String, default: lazy { ::File.join(admin_dir, 'tnsnames.ora
 property :tnsnames_cookbook, String, default: 'oracle-client'
 property :sqlnet, String, default: lazy { ::File.join(admin_dir, 'sqlnet.ora') }
 property :sqlnet_cookbook, String, default: 'oracle-client'
+property :override_temp, TrueClass
 
 default_action :create
 
@@ -138,6 +139,7 @@ action :create do
     user ownername
     command "DISPLAY= #{cache_path}/oracle-client/runInstaller -silent -waitforcompletion -ignoreprereq -noconfig -responseFile #{silent_path} -ignoreSysprereqs -invPtrLoc  /etc/oraInst.loc"
     not_if { ::File.exist? ::File.join(client_home, 'bin/sqlplus') }
+    env ({'TEMP' => "#{cache_path}"}) unless override_temp.nil?
     returns [0, 253]
   end
 
