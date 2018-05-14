@@ -43,19 +43,20 @@ property :tnsnames, String, default: lazy { ::File.join(admin_dir, 'tnsnames.ora
 property :tnsnames_cookbook, String, default: 'oracle-client'
 property :sqlnet, String, default: lazy { ::File.join(admin_dir, 'sqlnet.ora') }
 property :sqlnet_cookbook, String, default: 'oracle-client'
+property :override_temp, TrueClass
 
 default_action :create
 
 action :create do
-  group groupname
+  group new_resource.groupname
 
-  user ownername do
-    group groupname
+  user new_resource.ownername do
+    group new_resource.groupname
   end
 
-  group groupname do
+  group new_resource.groupname do
     append true
-    members ownername
+    members new_resource.ownername
   end
 
   ## For ARK
@@ -66,7 +67,7 @@ action :create do
   end
 
   # Install the correct set of client prerequisite packages
-  if Gem::Version.new(version) < Gem::Version.new('12.1.0.1.0')
+  if Gem::Version.new(new_resource.version) < Gem::Version.new('12.1.0.1.0')
     # Client 11
     client11_packages = %w(make binutils gcc libaio libaio-devel libstdc++ elfutils-libelf-devel sysstat libgcc libstdc++-devel unixODBC-devel unixODBC glibc elfutils-libelf glibc-common glibc-devel gcc-c++ compat-libstdc++-33 expat sysstat elfutils-libelf-devel)
     client11_packages.each do |p|
@@ -78,7 +79,7 @@ action :create do
     end
   else
     # Client 12 Packages
-    client12_packages = %w(binutils  compat-libstdc++-33 gcc gcc-c++ glibc glibc glibc-devel glibc-devel ksh libgcc libgcc libstdc++ libstdc++ libstdc++ libstdc++ libaio libaio libaio-devel libaio-devel libXext libXext libXtst libXtst libX11 libX11 libXau libXau libxcb libxcb libXi libXi make sysstat)
+    client12_packages = %w(binutils compat-libcap1 compat-libstdc++-33.i686 compat-libstdc++-33.x86_64 gcc gcc-c++ glibc.i686 glibc.x86_64 glibc-devel.i686 glibc-devel.x86_64 ksh libaio.i686 libaio.x86_64 libaio-devel.i686 libaio-devel.x86_64 libgcc.i686 libgcc.x86_64 libstdc++.i686 libstdc++.x86_64 libstdc++-devel.i686 libstdc++-devel.x86_64 libXi.i686 libXi libXtst.i686 libXtst.x86_64 libXext.i686 libXext.x86_64 libX11.i686 libX11.x86_64 libXau.i686 libXau.x86_64 libxcb.i686 libxcb.x86_64 make sysstat)
     client12_packages.each do |p|
       package p
     end
@@ -90,73 +91,74 @@ action :create do
   # Make sure the installer user is in the same group as the inventory
   group node['oracle']['inventory']['group'] do
     append true
-    members ownername
+    members new_resource.ownername
   end
 
-  directory cache_path do
-    group groupname
-    owner ownername
+  directory new_resource.cache_path do
+    group new_resource.groupname
+    owner new_resource.ownername
     recursive true
   end
 
-  directory oracle_base do
-    group groupname
-    owner ownername
+  directory new_resource.oracle_base do
+    group new_resource.groupname
+    owner new_resource.ownername
     recursive true
   end
 
-  directory client_home do
-    group groupname
-    owner ownername
+  directory new_resource.client_home do
+    group new_resource.groupname
+    owner new_resource.ownername
   end
 
-  template silent_path do
-    cookbook silent_cookbook
-    group groupname
-    owner ownername
-    source silent_file + '.erb'
+  template new_resource.silent_path do
+    cookbook new_resource.silent_cookbook
+    group new_resource.groupname
+    owner new_resource.ownername
+    source new_resource.silent_file + '.erb'
     variables(
-      groupname: groupname,
-      inventory_location: inventory_location,
-      client_home: client_home,
-      oracle_base: oracle_base,
-      locale: locale
+      groupname: new_resource.groupname,
+      inventory_location: new_resource.inventory_location,
+      client_home: new_resource.client_home,
+      oracle_base: new_resource.oracle_base,
+      locale: new_resource.locale
     )
   end
 
   ark 'oracle-client' do
-    url installer_url
+    url new_resource.installer_url
     mode 02775
-    version version
-    owner ownername
-    path cache_path
+    version new_resource.version
+    owner new_resource.ownername
+    path new_resource.cache_path
     action :put
   end
 
   execute 'install' do
-    cwd cache_path
-    user ownername
-    command "DISPLAY= #{cache_path}/oracle-client/runInstaller -silent -waitforcompletion -ignoreprereq -noconfig -responseFile #{silent_path} -ignoreSysprereqs -invPtrLoc  /etc/oraInst.loc"
-    not_if { ::File.exist? ::File.join(client_home, 'bin/sqlplus') }
+    cwd new_resource.cache_path
+    user new_resource.ownername
+    command "DISPLAY= #{new_resource.cache_path}/oracle-client/runInstaller -silent -waitforcompletion -ignoreprereq -noconfig -responseFile #{new_resource.silent_path} -ignoreSysprereqs -invPtrLoc  /etc/oraInst.loc"
+    not_if { ::File.exist? ::File.join(new_resource.client_home, 'bin/sqlplus') }
+	env ({'TEMP' => "#{new_resource.cache_path}"}) unless new_resource.override_temp.nil?
     returns [0, 253]
   end
 
-  template tnsnames do
-    cookbook tnsnames_cookbook
+  template new_resource.tnsnames do
+    cookbook new_resource.tnsnames_cookbook
     mode '0755'
-    owner ownername
-    group groupname
+    owner new_resource.ownername
+    group new_resource.groupname
     source 'tnsnames.ora.erb'
     variables db: node['oracle']['client']['tnsnames']
     only_if { node['oracle']['client']['tnsnames'] }
   end
 
-  template sqlnet do
-    cookbook sqlnet_cookbook
+  template new_resource.sqlnet do
+    cookbook new_resource.sqlnet_cookbook
     mode '0755'
-    owner ownername
-    group groupname
+    owner new_resource.ownername
+    group new_resource.groupname
     source 'sqlnet.ora.erb'
-    variables oracle_base: oracle_base
+    variables oracle_base: new_resource.oracle_base
   end
 end

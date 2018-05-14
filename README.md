@@ -23,19 +23,21 @@ The following platforms have been tested with Test Kitchen:
 =======
 
 ```
-|----------------+------------+------------|
-|                | 12.1.0.1.0 | 11.2.0.1.0 |
-|----------------+------------+------------|
-| ubuntu-10.04   |            |            |
-|----------------+------------+------------|
-| ubuntu-12.04   |            |            |
-|----------------+------------+------------|
-| ubuntu-14.04   |            |            |
-|----------------+------------+------------|
-| centos-5       |     X      |      X     |
-|----------------+------------+------------|
-| centos-6       |     X      |      X     |
-|----------------+------------+------------|
+|----------------+------------+------------+------------|
+|                | 12.2.1.0   | 12.1.0.1.0 | 11.2.0.1.0 |
+|----------------+------------+------------|------------|
+| ubuntu-10.04   |            |            |            |
+|----------------+------------+------------|------------|
+| ubuntu-12.04   |            |            |            |
+|----------------+------------+------------|------------|
+| ubuntu-14.04   |            |            |            |
+|----------------+------------+------------|------------|
+| centos-5       |            |     X      |      X     |
+|----------------+------------+------------|------------|
+| centos-6       |            |     X      |      X     |
+|----------------+------------+------------|------------|
+| rhel-7 CIS     |     X      |            |            |
+|----------------+------------+------------|------------|
 ```
 If your Operating system is not on this list please submit a pull request with an update kitchen file and related tests.
 
@@ -62,10 +64,13 @@ depends 'oracle-client', '~> 0.3.0'
 Then in a recipe:
 ```ruby
 node.default['common_artifact_url'] = 'htttp://artifact.home/software'
+node.defaultp'cache_path] = '/temp/oracle_client'
 
 oracle_client '11.2.0.1' do
   ownername 'app1'
   groupname 'app_group'
+  override_temp true
+  cache_path node.default['cache_path']
   installer_file 'client-11.2.0.1.zip'
 end
 ```
@@ -84,3 +89,7 @@ Authors
 ------
 - Dan Webb
 - Luke Bradbury
+
+Changes for RHEL7 CIS
+---------------------
+- Sumit Agarwal
