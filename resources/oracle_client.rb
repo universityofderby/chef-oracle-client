@@ -148,9 +148,9 @@ action :create do
     mode '0755'
     owner new_resource.ownername
     group new_resource.groupname
-    source 'new_resource.tnsnames.ora.erb'
-    variables db: node['oracle']['client']['new_resource.tnsnames']
-    only_if { node['oracle']['client']['new_resource.tnsnames'] }
+    source 'tnsnames.ora.erb'
+    variables db: node['oracle']['client']['tnsnames']
+    only_if { node['oracle']['client']['tnsnames'] }
   end
 
   template new_resource.sqlnet do
